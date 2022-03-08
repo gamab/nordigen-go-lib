@@ -43,6 +43,7 @@ type AccountDetails struct {
 		OwnerName  string `json:"ownerName,omitempty"`
 		Product    string `json:"product,omitempty,"`
 		Status     string `json:"status,omitempty"`
+		Name       string `json:"name,omitempty"`
 	} `json:"account"`
 }
 
