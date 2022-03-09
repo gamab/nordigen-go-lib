@@ -27,9 +27,9 @@ type AccountBalanceAmount struct {
 }
 
 type AccountBalance struct {
-	BalanceAmount AccountBalanceAmount `json:"balanceAmount,omitempty"`
-	BalanceType   string               `json:"balanceType,omitempty"`
-	ReferenceDate string               `json:"referenceDate,omitempty"`
+	BalanceAmount      AccountBalanceAmount `json:"balanceAmount,omitempty"`
+	BalanceType        string               `json:"balanceType,omitempty"`
+	LastChangeDateTime string               `json:"lastChangeDateTime,omitempty"`
 }
 
 type AccountBalances struct {
