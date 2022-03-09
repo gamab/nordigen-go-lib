@@ -7,11 +7,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 )
 
 const requisitionsPath = "requisitions"
+
+type Requisitions struct {
+	Count    int64         `json:"count,omitempty"`
+	Next     string        `json:"next,omitempty"`
+	Previous string        `json:"previous,omitempty"`
+	Results  []Requisition `json:"results,omitempty"`
+}
 
 type Requisition struct {
 	Id       string    `json:"id,omitempty"`
@@ -96,6 +104,42 @@ func (c Client) GetRequisition(id string) (r Requisition, err error) {
 
 	if err != nil {
 		return Requisition{}, err
+	}
+
+	return r, nil
+}
+
+func (c Client) GetRequisitions(limit int64, offset int64) (r Requisitions, err error) {
+	url := &url.URL{
+		Path: strings.Join([]string{requisitionsPath, ""}, "/"),
+	}
+	queryParams := url.Query()
+	queryParams.Add("limit", strconv.FormatInt(limit, 10))
+	queryParams.Add("offset", strconv.FormatInt(offset, 10))
+	url.RawQuery = queryParams.Encode()
+
+	req := http.Request{
+		Method: http.MethodGet,
+		URL:    url,
+	}
+	resp, err := c.c.Do(&req)
+
+	if err != nil {
+		return Requisitions{}, err
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		return Requisitions{}, err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return Requisitions{}, &APIError{resp.StatusCode, string(body), err}
+	}
+	err = json.Unmarshal(body, &r)
+
+	if err != nil {
+		return Requisitions{}, err
 	}
 
 	return r, nil
