@@ -68,17 +68,19 @@ type AccountTransactions struct {
 			DebtorAccount    struct {
 				Iban string `json:"iban,omitempty"`
 			} `json:"debtorAccount,omitempty"`
-			UltimateDebtor                    string `json:"ultimateDebtor,omitempty"`
-			RemittanceInformationUnstructured string `json:"remittanceInformationUnstructured"`
-			BankTransactionCode               string `json:"bankTransactionCode,omitempty"`
+			UltimateDebtor                         string   `json:"ultimateDebtor,omitempty"`
+			RemittanceInformationUnstructured      string   `json:"remittanceInformationUnstructured,omitempty"`
+			RemittanceInformationUnstructuredArray []string `json:"remittanceInformationUnstructuredArray,omitempty"`
+			BankTransactionCode                    string   `json:"bankTransactionCode,omitempty"`
 		} `json:"booked,omitempty"`
 		Pending []struct {
 			TransactionAmount struct {
 				Amount   string `json:"amount,omitempty"`
 				Currency string `json:"currency,omitempty"`
 			} `json:"transactionAmount"`
-			ValueDate                         string `json:"valueDate,omitempty"`
-			RemittanceInformationUnstructured string `json:"remittanceInformationUnstructured,omitempty"`
+			ValueDate                              string   `json:"valueDate,omitempty"`
+			RemittanceInformationUnstructured      string   `json:"remittanceInformationUnstructured,omitempty"`
+			RemittanceInformationUnstructuredArray []string `json:"remittanceInformationUnstructuredArray,omitempty"`
 		} `json:"pending,omitempty"`
 	} `json:"transactions,omitempty"`
 }
