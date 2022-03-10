@@ -1,6 +1,7 @@
 package nordigen
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -88,15 +89,17 @@ const balancesPath = "balances"
 const detailsPath = "details"
 const transactionsPath = "transactions"
 
-func (c *Client) GetAccountMetadata(id string) (AccountMetadata, error) {
-	req := http.Request{
+func (c *Client) GetAccountMetadata(ctx context.Context, id string) (AccountMetadata, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{accountPath, id, ""}, "/"),
 		},
 	}
-	resp, err := c.c.Do(&req)
 
+	req = req.WithContext(ctx)
+
+	resp, err := c.c.Do(req)
 	if err != nil {
 		return AccountMetadata{}, err
 	}
@@ -118,14 +121,16 @@ func (c *Client) GetAccountMetadata(id string) (AccountMetadata, error) {
 	return accMtdt, nil
 }
 
-func (c *Client) GetAccountBalances(id string) (AccountBalances, error) {
-	req := http.Request{
+func (c *Client) GetAccountBalances(ctx context.Context, id string) (AccountBalances, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{accountPath, id, balancesPath, ""}, "/"),
 		},
 	}
-	resp, err := c.c.Do(&req)
+
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return AccountBalances{}, err
@@ -148,14 +153,16 @@ func (c *Client) GetAccountBalances(id string) (AccountBalances, error) {
 	return accBlnc, nil
 }
 
-func (c *Client) GetAccountDetails(id string) (AccountDetails, error) {
-	req := http.Request{
+func (c *Client) GetAccountDetails(ctx context.Context, id string) (AccountDetails, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{accountPath, id, detailsPath, ""}, "/"),
 		},
 	}
-	resp, err := c.c.Do(&req)
+
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return AccountDetails{}, err
@@ -178,8 +185,8 @@ func (c *Client) GetAccountDetails(id string) (AccountDetails, error) {
 	return accDtl, nil
 }
 
-func (c *Client) GetAccountTransactions(id string, from, to *time.Time) (AccountTransactions, error) {
-	req := http.Request{
+func (c *Client) GetAccountTransactions(ctx context.Context, id string, from, to *time.Time) (AccountTransactions, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path:     strings.Join([]string{accountPath, id, transactionsPath, ""}, "/"),
@@ -187,7 +194,8 @@ func (c *Client) GetAccountTransactions(id string, from, to *time.Time) (Account
 		},
 	}
 
-	resp, err := c.c.Do(&req)
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return AccountTransactions{}, err

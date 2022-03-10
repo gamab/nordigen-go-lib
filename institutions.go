@@ -1,6 +1,7 @@
 package nordigen
 
 import (
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -20,18 +21,19 @@ type Institution struct {
 	Logo                 string   `json:"logo"`
 }
 
-func (c *Client) ListInstitutions(country string) ([]Institution, error) {
-	req := http.Request{
+func (c *Client) ListInstitutions(ctx context.Context, country string) ([]Institution, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{institutionsPath, ""}, "/"),
 		},
 	}
+	req = req.WithContext(ctx)
 	q := req.URL.Query()
 	q.Add(countryParam, country)
 	req.URL.RawQuery = q.Encode()
 
-	resp, err := c.c.Do(&req)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -54,14 +56,16 @@ func (c *Client) ListInstitutions(country string) ([]Institution, error) {
 	return list, nil
 }
 
-func (c *Client) GetInstitution(institutionID string) (Institution, error) {
-	req := http.Request{
+func (c *Client) GetInstitution(ctx context.Context, institutionID string) (Institution, error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{institutionsPath, institutionID, ""}, "/"),
 		},
 	}
-	resp, err := c.c.Do(&req)
+
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return Institution{}, err

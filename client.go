@@ -1,6 +1,7 @@
 package nordigen
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -38,7 +39,7 @@ func (t *refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, er
 	t.cli.m.Lock()
 
 	if t.cli.expiration.Before(time.Now()) {
-		t.cli.token, err = t.cli.refreshToken(t.cli.token.Refresh)
+		t.cli.token, err = t.cli.refreshToken(context.Background(), t.cli.token.Refresh)
 
 		if err != nil {
 			return nil, err
@@ -55,7 +56,7 @@ func NewClient(secretId, secretKey string) (*Client, error) {
 	var err error
 
 	c := &Client{c: &http.Client{}, m: &sync.Mutex{}}
-	c.token, err = c.newToken(secretId, secretKey)
+	c.token, err = c.newToken(context.Background(), secretId, secretKey)
 
 	if err != nil {
 		return nil, err
