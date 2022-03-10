@@ -1,6 +1,7 @@
 package nordigen
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -13,8 +14,6 @@ const apiPath = "/api/v2"
 
 type Client struct {
 	c          *http.Client
-	secretId   string
-	secretKey  string
 	expiration time.Time
 	token      *Token
 	m          *sync.Mutex
@@ -25,7 +24,7 @@ type refreshTokenTransport struct {
 	cli *Client
 }
 
-func (t refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t *refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	var err error
 
 	req.URL.Scheme = "https"
@@ -38,7 +37,7 @@ func (t refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, err
 	t.cli.m.Lock()
 
 	if t.cli.expiration.Before(time.Now()) {
-		t.cli.token, err = t.cli.refreshToken(t.cli.token.Refresh)
+		t.cli.token, err = t.cli.refreshToken(context.Background(), t.cli.token.Refresh)
 
 		if err != nil {
 			return nil, err
@@ -55,12 +54,12 @@ func NewClient(secretId, secretKey string) (*Client, error) {
 	var err error
 
 	c := &Client{c: &http.Client{}, m: &sync.Mutex{}}
-	c.token, err = c.newToken(secretId, secretKey)
+	c.token, err = c.newToken(context.Background(), secretId, secretKey)
 
 	if err != nil {
 		return nil, err
 	}
-	c.c.Transport = refreshTokenTransport{rt: http.DefaultTransport, cli: c}
+	c.c.Transport = &refreshTokenTransport{rt: http.DefaultTransport, cli: c}
 	c.expiration = time.Now().Add(time.Duration(c.token.AccessExpires-60) * time.Second)
 
 	return c, nil

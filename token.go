@@ -2,6 +2,7 @@ package nordigen
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -26,8 +27,8 @@ const tokenPath = "token"
 const tokenNewPath = "new/"
 const tokenRefreshPath = "refresh"
 
-func (c Client) newToken(secretId, secretKey string) (*Token, error) {
-	req := http.Request{
+func (c *Client) newToken(ctx context.Context, secretId, secretKey string) (*Token, error) {
+	req := &http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
 			Scheme: "https",
@@ -35,6 +36,7 @@ func (c Client) newToken(secretId, secretKey string) (*Token, error) {
 			Path:   strings.Join([]string{apiPath, tokenPath, tokenNewPath}, "/"),
 		},
 	}
+	req = req.WithContext(ctx)
 	req.Header = http.Header{}
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Accept", "application/json")
@@ -47,7 +49,7 @@ func (c Client) newToken(secretId, secretKey string) (*Token, error) {
 		return nil, err
 	}
 	req.Body = io.NopCloser(bytes.NewBuffer(data))
-	resp, err := c.c.Do(&req)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return nil, err
@@ -70,21 +72,23 @@ func (c Client) newToken(secretId, secretKey string) (*Token, error) {
 	return t, nil
 }
 
-func (c Client) refreshToken(refresh string) (*Token, error) {
-	req := http.Request{
+func (c *Client) refreshToken(ctx context.Context, refresh string) (*Token, error) {
+	req := &http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
 			Path: strings.Join([]string{tokenPath, tokenRefreshPath}, "/"),
 		},
 	}
-	data, err := json.Marshal(refresh)
+	req = req.WithContext(ctx)
 
+	data, err := json.Marshal(refresh)
 	if err != nil {
 		return &Token{}, err
 	}
+
 	req.Body = io.NopCloser(bytes.NewBuffer(data))
 
-	resp, err := c.c.Do(&req)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return nil, err

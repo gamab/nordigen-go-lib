@@ -2,6 +2,7 @@ package nordigen
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -43,13 +44,15 @@ type Status struct {
 	Description string `json:"description,omitempty"`
 }
 
-func (c Client) CreateRequisition(r Requisition) (Requisition, error) {
-	req := http.Request{
+func (c *Client) CreateRequisition(ctx context.Context, r Requisition) (Requisition, error) {
+	req := &http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
 			Path: strings.Join([]string{requisitionsPath, ""}, "/"),
 		},
 	}
+
+	req = req.WithContext(ctx)
 	data, err := json.Marshal(r)
 
 	if err != nil {
@@ -57,7 +60,7 @@ func (c Client) CreateRequisition(r Requisition) (Requisition, error) {
 	}
 	req.Body = io.NopCloser(bytes.NewBuffer(data))
 
-	resp, err := c.c.Do(&req)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return Requisition{}, err
@@ -79,14 +82,16 @@ func (c Client) CreateRequisition(r Requisition) (Requisition, error) {
 	return r, nil
 }
 
-func (c Client) GetRequisition(id string) (r Requisition, err error) {
-	req := http.Request{
+func (c *Client) GetRequisition(ctx context.Context, id string) (r Requisition, err error) {
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
 			Path: strings.Join([]string{requisitionsPath, id, ""}, "/"),
 		},
 	}
-	resp, err := c.c.Do(&req)
+
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return Requisition{}, err
@@ -109,7 +114,7 @@ func (c Client) GetRequisition(id string) (r Requisition, err error) {
 	return r, nil
 }
 
-func (c Client) GetRequisitions(limit int64, offset int64) (r Requisitions, err error) {
+func (c *Client) GetRequisitions(ctx context.Context, limit int64, offset int64) (r Requisitions, err error) {
 	url := &url.URL{
 		Path: strings.Join([]string{requisitionsPath, ""}, "/"),
 	}
@@ -118,11 +123,12 @@ func (c Client) GetRequisitions(limit int64, offset int64) (r Requisitions, err 
 	queryParams.Add("offset", strconv.FormatInt(offset, 10))
 	url.RawQuery = queryParams.Encode()
 
-	req := http.Request{
+	req := &http.Request{
 		Method: http.MethodGet,
 		URL:    url,
 	}
-	resp, err := c.c.Do(&req)
+	req = req.WithContext(ctx)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return Requisitions{}, err

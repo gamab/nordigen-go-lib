@@ -2,6 +2,7 @@ package nordigen
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"io/ioutil"
@@ -25,13 +26,14 @@ type EndUserAgreement struct {
 const agreementsPath = "agreements"
 const endUserPath = "enduser"
 
-func (c Client) CreateEndUserAgreement(eua EndUserAgreement) (EndUserAgreement, error) {
-	req := http.Request{
+func (c *Client) CreateEndUserAgreement(ctx context.Context, eua EndUserAgreement) (EndUserAgreement, error) {
+	req := &http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
 			Path: strings.Join([]string{agreementsPath, endUserPath, ""}, "/"),
 		},
 	}
+	req = req.WithContext(ctx)
 	data, err := json.Marshal(eua)
 
 	if err != nil {
@@ -39,7 +41,7 @@ func (c Client) CreateEndUserAgreement(eua EndUserAgreement) (EndUserAgreement, 
 	}
 	req.Body = io.NopCloser(bytes.NewBuffer(data))
 
-	resp, err := c.c.Do(&req)
+	resp, err := c.c.Do(req)
 
 	if err != nil {
 		return EndUserAgreement{}, err
