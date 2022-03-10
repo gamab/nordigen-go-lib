@@ -88,7 +88,7 @@ const balancesPath = "balances"
 const detailsPath = "details"
 const transactionsPath = "transactions"
 
-func (c Client) GetAccountMetadata(id string) (AccountMetadata, error) {
+func (c *Client) GetAccountMetadata(id string) (AccountMetadata, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
@@ -118,7 +118,7 @@ func (c Client) GetAccountMetadata(id string) (AccountMetadata, error) {
 	return accMtdt, nil
 }
 
-func (c Client) GetAccountBalances(id string) (AccountBalances, error) {
+func (c *Client) GetAccountBalances(id string) (AccountBalances, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
@@ -148,7 +148,7 @@ func (c Client) GetAccountBalances(id string) (AccountBalances, error) {
 	return accBlnc, nil
 }
 
-func (c Client) GetAccountDetails(id string) (AccountDetails, error) {
+func (c *Client) GetAccountDetails(id string) (AccountDetails, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
@@ -178,7 +178,7 @@ func (c Client) GetAccountDetails(id string) (AccountDetails, error) {
 	return accDtl, nil
 }
 
-func (c Client) GetAccountTransactions(id string, from, to *time.Time) (AccountTransactions, error) {
+func (c *Client) GetAccountTransactions(id string, from, to *time.Time) (AccountTransactions, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{

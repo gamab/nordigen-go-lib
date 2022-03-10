@@ -25,7 +25,7 @@ type refreshTokenTransport struct {
 	cli *Client
 }
 
-func (t refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t *refreshTokenTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	var err error
 
 	req.URL.Scheme = "https"
@@ -60,7 +60,7 @@ func NewClient(secretId, secretKey string) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	c.c.Transport = refreshTokenTransport{rt: http.DefaultTransport, cli: c}
+	c.c.Transport = &refreshTokenTransport{rt: http.DefaultTransport, cli: c}
 	c.expiration = time.Now().Add(time.Duration(c.token.AccessExpires-60) * time.Second)
 
 	return c, nil

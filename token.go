@@ -26,7 +26,7 @@ const tokenPath = "token"
 const tokenNewPath = "new/"
 const tokenRefreshPath = "refresh"
 
-func (c Client) newToken(secretId, secretKey string) (*Token, error) {
+func (c *Client) newToken(secretId, secretKey string) (*Token, error) {
 	req := http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
@@ -70,7 +70,7 @@ func (c Client) newToken(secretId, secretKey string) (*Token, error) {
 	return t, nil
 }
 
-func (c Client) refreshToken(refresh string) (*Token, error) {
+func (c *Client) refreshToken(refresh string) (*Token, error) {
 	req := http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{

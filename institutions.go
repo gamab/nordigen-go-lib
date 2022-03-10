@@ -20,7 +20,7 @@ type Institution struct {
 	Logo                 string   `json:"logo"`
 }
 
-func (c Client) ListInstitutions(country string) ([]Institution, error) {
+func (c *Client) ListInstitutions(country string) ([]Institution, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
@@ -54,7 +54,7 @@ func (c Client) ListInstitutions(country string) ([]Institution, error) {
 	return list, nil
 }
 
-func (c Client) GetInstitution(institutionID string) (Institution, error) {
+func (c *Client) GetInstitution(institutionID string) (Institution, error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{

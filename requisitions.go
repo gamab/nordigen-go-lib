@@ -43,7 +43,7 @@ type Status struct {
 	Description string `json:"description,omitempty"`
 }
 
-func (c Client) CreateRequisition(r Requisition) (Requisition, error) {
+func (c *Client) CreateRequisition(r Requisition) (Requisition, error) {
 	req := http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
@@ -79,7 +79,7 @@ func (c Client) CreateRequisition(r Requisition) (Requisition, error) {
 	return r, nil
 }
 
-func (c Client) GetRequisition(id string) (r Requisition, err error) {
+func (c *Client) GetRequisition(id string) (r Requisition, err error) {
 	req := http.Request{
 		Method: http.MethodGet,
 		URL: &url.URL{
@@ -109,7 +109,7 @@ func (c Client) GetRequisition(id string) (r Requisition, err error) {
 	return r, nil
 }
 
-func (c Client) GetRequisitions(limit int64, offset int64) (r Requisitions, err error) {
+func (c *Client) GetRequisitions(limit int64, offset int64) (r Requisitions, err error) {
 	url := &url.URL{
 		Path: strings.Join([]string{requisitionsPath, ""}, "/"),
 	}

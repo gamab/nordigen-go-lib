@@ -25,7 +25,7 @@ type EndUserAgreement struct {
 const agreementsPath = "agreements"
 const endUserPath = "enduser"
 
-func (c Client) CreateEndUserAgreement(eua EndUserAgreement) (EndUserAgreement, error) {
+func (c *Client) CreateEndUserAgreement(eua EndUserAgreement) (EndUserAgreement, error) {
 	req := http.Request{
 		Method: http.MethodPost,
 		URL: &url.URL{
