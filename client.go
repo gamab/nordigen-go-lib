@@ -14,8 +14,6 @@ const apiPath = "/api/v2"
 
 type Client struct {
 	c          *http.Client
-	secretId   string
-	secretKey  string
 	expiration time.Time
 	token      *Token
 	m          *sync.Mutex
